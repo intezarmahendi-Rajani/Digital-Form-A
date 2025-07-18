@@ -3,7 +3,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
 <br>
 <br>
 
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
