@@ -1,6 +1,8 @@
 # Digital-Form-A
 For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining employees as per 12th safety conference of DGMS.
 <br>
+<br>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -83,8 +85,9 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         <label for="area">Area Name</label>
         <select id="area">
           <option>Choose Area Name</option>
-          <option>Utkal Area</option>
-          <option>Central Block</option>
+          <option>Angul</option>
+          <option>Tamnar</option>
+          option>Kasia</option>
         </select>
       </div>
       <div class="form-group">
@@ -92,6 +95,10 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         <select id="mine">
           <option>Choose Mine Name</option>
           <option>Utkal C</option>
+           <option>Utkal B1</option>
+           <option>Utkal B2</option>
+           <option>Tensa Mine</option>
+           <option>Kasia Mine</option>
         </select>
       </div>
       <div class="form-group">
