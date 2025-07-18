@@ -3,7 +3,6 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
 <br>
 <br>
 
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -14,8 +13,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #f2f2f2;
-      background-image: url('<img width="2325" height="838" alt="image" src="https://github.com/user-attachments/assets/2373bdde-a130-4610-a407-5b46b357193c" />
-'); /* Replace with actual mine image */
+      background-image: url('background-mine.jpg'); /* Replace with actual mine image */
       background-size: cover;
       background-position: center;
     }
@@ -80,15 +78,14 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
 <body>
   <div class="container">
     <div class="login-box">
-      <img src="<img width="500" height="233" alt="JSPL LOGO" src="https://github.com/user-attachments/assets/4ad38417-1df7-4b96-8aec-1340954898f9" />
-" alt="JSPL Logo" style="width: 60px; display: block; margin: 0 auto;">
+      <img src="jspl-logo.png" alt="JSPL Logo" style="width: 60px; display: block; margin: 0 auto;">
       <h1>UTKAL C COAL MINE<br>Jindal Steel and Power Ltd</h1>
       <div class="form-group">
         <label for="area">Area Name</label>
         <select id="area">
           <option>Choose Area Name</option>
           <option>Angul</option>
-          <option>Tamnar</option>
+          <option>Tensa</option>
           <option>Kasia</option>
         </select>
       </div>
@@ -97,10 +94,10 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         <select id="mine">
           <option>Choose Mine Name</option>
           <option>Utkal C</option>
-           <option>Utkal B1</option>
-           <option>Utkal B2</option>
-           <option>Tensa Mine</option>
-           <option>Kasia Mine</option>
+          <option>Utkal B1</option>
+          <option>Utkal B2</option>
+          <option>Tensa Mine</option>
+          <option>Kasia Mine</option>
         </select>
       </div>
       <div class="form-group">
