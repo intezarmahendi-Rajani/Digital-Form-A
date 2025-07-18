@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --jspl-blue: #0055a4;
@@ -17,6 +18,12 @@
             --light: #f5f7fa;
             --success: #28a745;
             --danger: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
@@ -82,19 +89,6 @@
             font-size: 1.5rem;
             text-align: center;
             line-height: 1.2;
-        }
-        
-        .login-header::after {
-            content: "";
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
-            background: var(--jspl-blue);
-            transform: rotate(45deg);
-            z-index: 1;
         }
         
         .login-body {
@@ -390,6 +384,81 @@
             border: 1px solid #ddd;
         }
         
+        .employee-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .employee-table th {
+            background: var(--jspl-blue);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .employee-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .employee-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .employee-table .action-btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+        }
+        
+        .photo-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        
+        .photo-upload:hover {
+            border-color: var(--jspl-blue);
+            background: #f0f8ff;
+        }
+        
+        .photo-preview {
+            width: 150px;
+            height: 180px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: block;
+            margin: 0 auto 15px;
+        }
+        
+        .photo-placeholder {
+            width: 150px;
+            height: 180px;
+            background: #f5f5f5;
+            border: 1px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .qr-code-container {
+            width: 120px;
+            height: 120px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            padding: 5px;
+        }
+        
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -616,6 +685,18 @@
             font-size: 1.1rem;
             color: var(--jspl-red);
         }
+        
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -841,7 +922,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4 text-center">
-                                            <div class="qr-code" id="qrPreview1"></div>
+                                            <div class="qr-code-container" id="qrPreview1"></div>
                                             <button class="btn btn-sm btn-primary mt-2">Generate ID Card</button>
                                         </div>
                                     </div>
@@ -875,7 +956,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4 text-center">
-                                            <div class="qr-code" id="qrPreview2"></div>
+                                            <div class="qr-code-container" id="qrPreview2"></div>
                                             <button class="btn btn-sm btn-primary mt-2">Generate ID Card</button>
                                         </div>
                                     </div>
@@ -895,28 +976,72 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
+                                        <div class="col-md-4 mb-4">
+                                            <div class="photo-upload" id="photoUpload">
+                                                <div class="photo-placeholder" id="photoPlaceholder">
+                                                    <i class="fas fa-camera fa-3x mb-2"></i>
+                                                    <div>Click to upload employee photo</div>
+                                                </div>
+                                                <img id="photoPreview" class="photo-preview d-none">
+                                                <input type="file" id="employeePhoto" accept="image/*" class="d-none">
+                                                <div class="text-muted mt-2">Max file size: 2MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Form A Number</label>
+                                                        <input type="text" class="form-control" name="formA_number" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">SL NO</label>
+                                                        <input type="text" class="form-control" name="sl_no" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Gender</label>
+                                                        <select class="form-select" name="gender" required>
+                                                            <option selected disabled>Choose Gender</option>
+                                                            <option>Male</option>
+                                                            <option>Female</option>
+                                                            <option>Other</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Date of Joining</label>
+                                                        <input type="date" class="form-control" name="date_of_joining" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Name of the Establishment</label>
+                                                        <select class="form-select" name="establishment_name" required>
+                                                            <option selected disabled>Choose Establishment</option>
+                                                            <option>Utkal C Coal Mine</option>
+                                                            <option>Utkal B1 Mine</option>
+                                                            <option>Utkal B2 Mine</option>
+                                                            <option>Tensa Mine</option>
+                                                            <option>Kesia Mine</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Employee Register</label>
+                                                        <input type="text" class="form-control" name="employee_register" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Father / Spouse Name</label>
+                                                        <input type="text" class="form-control" name="father_spouse_name" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Education</label>
+                                                        <input type="text" class="form-control" name="education" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Form A Number</label>
-                                                <input type="text" class="form-control" name="formA_number" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">SL NO</label>
-                                                <input type="text" class="form-control" name="sl_no" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Gender</label>
-                                                <select class="form-select" name="gender" required>
-                                                    <option selected disabled>Choose Gender</option>
-                                                    <option>Male</option>
-                                                    <option>Female</option>
-                                                    <option>Other</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Date of Joining</label>
-                                                <input type="date" class="form-control" name="date_of_joining" required>
-                                            </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Employment Type</label>
                                                 <input type="text" class="form-control" name="employment_type" required>
@@ -933,35 +1058,8 @@
                                                 <label class="form-label">Permanent Address</label>
                                                 <textarea class="form-control" rows="2" name="permanent_address" required></textarea>
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Token Number</label>
-                                                <input type="text" class="form-control" name="token_number" required>
-                                            </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Name of the Establishment</label>
-                                                <select class="form-select" name="establishment_name" required>
-                                                    <option selected disabled>Choose Establishment</option>
-                                                    <option>Utkal C Coal Mine</option>
-                                                    <option>Utkal B1 Mine</option>
-                                                    <option>Utkal B2 Mine</option>
-                                                    <option>Tensa Mine</option>
-                                                    <option>Kesia Mine</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Employee Register</label>
-                                                <input type="text" class="form-control" name="employee_register" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Father / Spouse Name</label>
-                                                <input type="text" class="form-control" name="father_spouse_name" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Education</label>
-                                                <input type="text" class="form-control" name="education" required>
-                                            </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Mobile</label>
                                                 <input type="tel" class="form-control" name="mobile" required>
@@ -977,14 +1075,6 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Date of Exit</label>
                                                 <input type="date" class="form-control" name="date_of_exit">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Date of First Appointment</label>
-                                                <input type="date" class="form-control" name="date_of_first_appointment" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">YT Certificate Date</label>
-                                                <input type="date" class="form-control" name="yt_certificate_date" required>
                                             </div>
                                         </div>
                                     </div>
@@ -1028,26 +1118,6 @@
                                                 <label class="form-label">Aadhar Number</label>
                                                 <input type="text" class="form-control" name="aadhar_number" required>
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Service Book</label>
-                                                <input type="text" class="form-control" name="service_book" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Reason of Exit</label>
-                                                <input type="text" class="form-control" name="reason_of_exit">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">IMZ/PME DATE</label>
-                                                <input type="date" class="form-control" name="imz_pme_date" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Nominee Name</label>
-                                                <input type="text" class="form-control" name="nominee_name" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Blood Group</label>
-                                                <input type="text" class="form-control" name="blood_group" required>
-                                            </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
@@ -1070,6 +1140,24 @@
                                                 <label class="form-label">IFSC Code</label>
                                                 <input type="text" class="form-control" name="ifsc_code" required>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Service Book</label>
+                                                <input type="text" class="form-control" name="service_book" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Reason of Exit</label>
+                                                <input type="text" class="form-control" name="reason_of_exit">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">IMZ/PME DATE</label>
+                                                <input type="date" class="form-control" name="imz_pme_date" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Present Address</label>
                                                 <textarea class="form-control" rows="2" name="present_address" required></textarea>
@@ -1089,65 +1177,82 @@
                                                     <option>Kesia Mine</option>
                                                 </select>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="section-title mt-5">Nominee Details <span class="jspl-badge">JSPL</span></h3>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-users"></i> Nominee Information
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label">Nominee Address</label>
-                                                <textarea class="form-control" rows="2" name="nominee_address" required></textarea>
+                                                <label class="form-label">Nominee Name</label>
+                                                <input type="text" class="form-control" name="nominee_name" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">NIT NUMBER</label>
-                                                <input type="text" class="form-control" name="nit_number" required>
+                                                <label class="form-label">Nominee Mobile</label>
+                                                <input type="tel" class="form-control" name="nominee_mobile" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Relationship</label>
+                                                <input type="text" class="form-control" name="relationship" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nominee Address</label>
+                                                <textarea class="form-control" rows="3" name="nominee_address" required></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Blood Group</label>
+                                                <input type="text" class="form-control" name="blood_group" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Date of First Appointment</label>
+                                                <input type="date" class="form-control" name="date_of_first_appointment" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">YT Certificate Date</label>
+                                                <input type="date" class="form-control" name="yt_certificate_date" required>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <h3 class="section-title mt-5">Department Details <span class="jspl-badge">JSPL</span></h3>
-                            
                             <div class="card">
                                 <div class="card-header">
-                                    <i class="fas fa-building"></i> Department Information
+                                    <i class="fas fa-save"></i> Save Employee Details
                                 </div>
                                 <div class="card-body">
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-info-circle me-2"></i> Department details will be automatically populated based on project assignment.
-                                    </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary me-2">
+                                        <button type="submit" class="btn btn-primary btn-lg me-3">
                                             <i class="fas fa-save me-1"></i> Save Employee Details
                                         </button>
-                                        <button type="reset" class="btn btn-outline-primary">
+                                        <button type="reset" class="btn btn-outline-primary btn-lg">
                                             <i class="fas fa-times me-1"></i> Reset Form
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </form>
-                        
-                        <div class="data-storage-info">
-                            <h5><i class="fas fa-database me-2"></i> Employee Data Storage</h5>
-                            <div class="storage-status">
-                                <span>Current Employees: </span>
-                                <span class="storage-count ms-2" id="employeeCount">0</span>
-                            </div>
-                            <div>Local Storage Status:</div>
-                            <div class="storage-bar">
-                                <div class="storage-fill" id="storageFill"></div>
-                            </div>
-                            <div class="mt-2">
-                                <button class="btn btn-sm btn-outline-primary me-2" id="viewEmployeesBtn">
-                                    <i class="fas fa-eye me-1"></i> View All Employees
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" id="clearStorageBtn">
-                                    <i class="fas fa-trash-alt me-1"></i> Clear Storage
-                                </button>
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- View Employee Section -->
                     <div id="viewEmployeeSection" class="d-none">
-                        <h3 class="section-title">Employee Details <span class="jspl-badge">JSPL</span></h3>
+                        <h3 class="section-title">Employee Records <span class="jspl-badge">JSPL</span></h3>
                         
                         <div class="card">
                             <div class="card-header">
@@ -1155,80 +1260,179 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <input type="text" class="form-control" placeholder="Search by name or ID">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-label">Employee Name</label>
+                                            <input type="text" class="form-control" id="searchName" placeholder="Enter employee name">
+                                        </div>
                                     </div>
-                                    <div class="col-md-3 mb-3">
-                                        <select class="form-select">
-                                            <option selected>All Mines</option>
-                                            <option>Utkal C Coal Mine</option>
-                                            <option>Utkal B1 Mine</option>
-                                            <option>Utkal B2 Mine</option>
-                                            <option>Tensa Mine</option>
-                                            <option>Kesia Mine</option>
-                                        </select>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-label">Employee ID</label>
+                                            <input type="text" class="form-control" id="searchId" placeholder="Enter employee ID">
+                                        </div>
                                     </div>
-                                    <div class="col-md-3 mb-3">
-                                        <select class="form-select">
-                                            <option selected>All Designations</option>
-                                            <option>Mine Supervisor</option>
-                                            <option>Heavy Equipment Operator</option>
-                                            <option>Blasting Technician</option>
-                                            <option>Safety Officer</option>
-                                        </select>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-label">Designation</label>
+                                            <select class="form-select" id="searchDesignation">
+                                                <option value="">All Designations</option>
+                                                <option>Mine Supervisor</option>
+                                                <option>Heavy Equipment Operator</option>
+                                                <option>Blasting Technician</option>
+                                                <option>Safety Officer</option>
+                                                <option>Geologist</option>
+                                                <option>Maintenance Engineer</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-label">Mine Location</label>
+                                            <select class="form-select" id="searchMine">
+                                                <option value="">All Mines</option>
+                                                <option>Utkal C Coal Mine</option>
+                                                <option>Utkal B1 Mine</option>
+                                                <option>Utkal B2 Mine</option>
+                                                <option>Tensa Mine</option>
+                                                <option>Kesia Mine</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-label">Status</label>
+                                            <select class="form-select" id="searchStatus">
+                                                <option value="">All Status</option>
+                                                <option>Active</option>
+                                                <option>Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" id="searchBtn">
+                                                <i class="fas fa-search me-1"></i> Search Employees
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-list"></i> Employee Records
+                                </div>
+                                <div>
+                                    <span id="resultCount">Showing 0 results</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="employee-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee ID</th>
+                                                <th>Full Name</th>
+                                                <th>Designation</th>
+                                                <th>Mine Location</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="employeeTableBody">
+                                            <tr>
+                                                <td colspan="6" class="text-center py-5">
+                                                    <i class="fas fa-search fa-2x mb-3"></i>
+                                                    <p>Use the search form to find employees</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Generate PDF Section -->
+                    <div id="generatePdfSection" class="d-none">
+                        <h3 class="section-title">Employee ID Card <span class="jspl-badge">JSPL</span></h3>
+                        
+                        <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-id-card"></i> Employee ID Card
+                                <i class="fas fa-id-card"></i> Employee Registration Form
                             </div>
                             <div class="card-body">
                                 <div class="id-card">
                                     <div class="id-header">
-                                        <h2>JINDAL STEEL & POWER (JSPL)</h2>
-                                        <h3>Utkal C Coal Mine, Angul, Odisha</h3>
+                                        <h2>Utkal C Coal Mine of JSPL</h2>
+                                        <h3>EMPLOYEE REGISTER FORM A</h3>
+                                        <h4>(See Rule 2(1) Part A and Part B)</h4>
                                     </div>
                                     <div class="id-body">
-                                        <div class="employee-photo">Employee Photo</div>
-                                        <div class="employee-info">
-                                            <div class="info-item">
-                                                <span class="info-label">Employee ID</span>
-                                                <span class="info-value">EMP-2023-056</span>
+                                        <div class="row">
+                                            <div class="col-md-4 text-center">
+                                                <div class="photo-placeholder" id="pdfPhotoPlaceholder">
+                                                    <i class="fas fa-user fa-3x"></i>
+                                                </div>
+                                                <div class="qr-code-container mt-3" id="pdfQrCode"></div>
                                             </div>
-                                            <div class="info-item">
-                                                <span class="info-label">Full Name</span>
-                                                <span class="info-value">Suraj Pandey</span>
-                                            </div>
-                                            <div class="info-item">
-                                                <span class="info-label">Designation</span>
-                                                <span class="info-value">Dumper Operator</span>
-                                            </div>
-                                            <div class="info-item">
-                                                <span class="info-label">S/W/D</span>
-                                                <span class="info-value">Paramananda Pandey</span>
-                                            </div>
-                                            <div class="info-item">
-                                                <span class="info-label">A Form</span>
-                                                <span class="info-value">ALPL131</span>
-                                            </div>
-                                            <div class="info-item">
-                                                <span class="info-label">Blood Group</span>
-                                                <span class="info-value">A+</span>
-                                            </div>
-                                            <div class="info-item">
-                                                <span class="info-label">Mobile</span>
-                                                <span class="info-value">8932856726</span>
-                                            </div>
-                                            <div class="info-item">
-                                                <span class="info-label">Date of Joining</span>
-                                                <span class="info-value">01-01-2023</span>
-                                            </div>
-                                            <div class="info-item">
-                                                <span class="info-label">Address</span>
-                                                <span class="info-value">AT/PO-HALDI, BALLIA, UTTAR PRADESH</span>
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <span class="info-label">Employee ID</span>
+                                                            <span class="info-value" id="pdfId">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">Full Name</span>
+                                                            <span class="info-value" id="pdfName">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">Designation</span>
+                                                            <span class="info-value" id="pdfDesignation">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">S/W/D</span>
+                                                            <span class="info-value" id="pdfFather">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">A Form</span>
+                                                            <span class="info-value" id="pdfFormA">-</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <span class="info-label">Blood Group</span>
+                                                            <span class="info-value" id="pdfBlood">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">Mobile</span>
+                                                            <span class="info-value" id="pdfMobile">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">Date of Joining</span>
+                                                            <span class="info-value" id="pdfDoj">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">Mine Location</span>
+                                                            <span class="info-value" id="pdfMine">-</span>
+                                                        </div>
+                                                        <div class="info-item">
+                                                            <span class="info-label">Status</span>
+                                                            <span class="info-value" id="pdfStatus">-</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="info-item mt-3">
+                                                    <span class="info-label">Address</span>
+                                                    <span class="info-value" id="pdfAddress">-</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1247,6 +1451,9 @@
                                 <div class="text-center mt-4">
                                     <button id="generatePdfBtn" class="btn btn-primary btn-lg">
                                         <i class="fas fa-file-pdf me-2"></i> Generate PDF with QR Code
+                                    </button>
+                                    <button id="backToSearch" class="btn btn-outline-primary btn-lg ms-3">
+                                        <i class="fas fa-arrow-left me-2"></i> Back to Search
                                     </button>
                                 </div>
                                 
@@ -1268,7 +1475,6 @@
     <div class="notification" id="notification"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Initialize libraries
         const { jsPDF } = window.jspdf;
@@ -1281,51 +1487,96 @@
             if (!localStorage.getItem(EMPLOYEE_STORAGE_KEY)) {
                 const sampleData = [
                     {
-                        id: Date.now(),
-                        formA_number: 'JSPL-2023-001',
+                        id: 'EMP-2023-056',
+                        formA_number: 'ALPL131',
                         establishment_name: 'Utkal C Coal Mine',
                         sl_no: '001',
                         employee_register: 'EMP-001',
                         gender: 'Male',
-                        father_spouse_name: 'Rajesh Sharma',
-                        education: 'B.Tech Mining',
-                        date_of_joining: '2023-01-15',
-                        employment_type: 'Permanent',
-                        mobile: '9876543210',
+                        father_spouse_name: 'Paramananda Pandey',
+                        education: 'High School',
+                        date_of_joining: '2023-01-01',
+                        employment_type: 'Contractual',
+                        mobile: '8932856726',
                         lwf: 'LWF-001',
                         esic_ip: 'ESIC-001',
                         bank_account_no: '123456789012',
                         bank_name: 'State Bank of India',
                         date_of_exit: '',
-                        permanent_address: '123 Main St, Barbil, Odisha',
-                        date_of_first_appointment: '2023-01-15',
+                        permanent_address: 'AT/PO-HALDI,BALLIA,UTTARPRADESH',
+                        date_of_first_appointment: '2023-01-01',
                         token_number: 'TKN-001',
-                        yt_certificate_date: '2023-01-20',
-                        first_name: 'Amit',
-                        last_name: 'Sharma',
+                        yt_certificate_date: '2023-01-10',
+                        first_name: 'Suraj',
+                        last_name: 'Pandey',
                         nationality: 'Indian',
-                        date_of_birth: '1990-05-10',
-                        designation: 'Mine Supervisor',
-                        category_address: 'Category A',
+                        date_of_birth: '1990-05-15',
+                        designation: 'Dumper Operator',
+                        category_address: 'Category C',
                         uan: 'UAN001',
                         pan_number: 'ABCDE1234F',
                         aadhar_number: '123412341234',
                         ifsc_code: 'SBIN0001234',
                         service_book: 'SB-001',
-                        present_address: 'Staff Quarter, Utkal C Coal Mine',
+                        present_address: 'Central Colony, Utkal C Coal Mine',
                         reason_of_exit: '',
                         identification_mark: 'Mole on left cheek',
                         imz_pme_date: '2023-02-01',
                         place_of_employment: 'Utkal C Coal Mine',
-                        nominee_name: 'Rajesh Sharma',
-                        nominee_address: '123 Main St, Barbil, Odisha',
+                        nominee_name: 'Radha Devi',
+                        nominee_address: 'AT/PO-HALDI,BALLIA,UTTARPRADESH',
+                        blood_group: 'A+',
+                        nit_number: 'NIT-001',
+                        status: 'Active',
+                        photo: ''
+                    },
+                    {
+                        id: 'EMP-2023-042',
+                        formA_number: 'ALPL129',
+                        establishment_name: 'Utkal B1 Mine',
+                        sl_no: '002',
+                        employee_register: 'EMP-002',
+                        gender: 'Male',
+                        father_spouse_name: 'Rajesh Kumar',
+                        education: 'Diploma in Mining',
+                        date_of_joining: '2023-02-15',
+                        employment_type: 'Contractual',
+                        mobile: '7890123456',
+                        lwf: 'LWF-002',
+                        esic_ip: 'ESIC-002',
+                        bank_account_no: '234567890123',
+                        bank_name: 'Punjab National Bank',
+                        date_of_exit: '',
+                        permanent_address: 'AT/PO-Barbil, Odisha',
+                        date_of_first_appointment: '2023-02-15',
+                        token_number: 'TKN-002',
+                        yt_certificate_date: '2023-02-20',
+                        first_name: 'Rajesh',
+                        last_name: 'Kumar',
+                        nationality: 'Indian',
+                        date_of_birth: '1988-11-22',
+                        designation: 'Safety Officer',
+                        category_address: 'Category B',
+                        uan: 'UAN002',
+                        pan_number: 'BCDEF2345G',
+                        aadhar_number: '234523452345',
+                        ifsc_code: 'PNB0001234',
+                        service_book: 'SB-002',
+                        present_address: 'Staff Quarters, Utkal B1 Mine',
+                        reason_of_exit: '',
+                        identification_mark: 'Scar on right hand',
+                        imz_pme_date: '2023-03-10',
+                        place_of_employment: 'Utkal B1 Mine',
+                        nominee_name: 'Sunita Devi',
+                        nominee_address: 'AT/PO-Barbil, Odisha',
                         blood_group: 'B+',
-                        nit_number: 'NIT-001'
+                        nit_number: 'NIT-002',
+                        status: 'Active',
+                        photo: ''
                     }
                 ];
                 localStorage.setItem(EMPLOYEE_STORAGE_KEY, JSON.stringify(sampleData));
             }
-            updateStorageUI();
         }
         
         // Get all employees
@@ -1334,28 +1585,222 @@
             return employees ? JSON.parse(employees) : [];
         }
         
-        // Save new employee
-        function saveEmployee(employeeData) {
+        // Search employees
+        function searchEmployees(filters) {
             const employees = getAllEmployees();
-            employeeData.id = Date.now(); // Unique ID
-            employees.push(employeeData);
-            localStorage.setItem(EMPLOYEE_STORAGE_KEY, JSON.stringify(employees));
-            return employeeData.id;
+            return employees.filter(emp => {
+                // Check name
+                if (filters.name) {
+                    const fullName = `${emp.first_name} ${emp.last_name}`.toLowerCase();
+                    if (!fullName.includes(filters.name.toLowerCase())) return false;
+                }
+                
+                // Check ID
+                if (filters.id && !emp.id.toLowerCase().includes(filters.id.toLowerCase())) return false;
+                
+                // Check designation
+                if (filters.designation && emp.designation !== filters.designation) return false;
+                
+                // Check mine
+                if (filters.mine && emp.place_of_employment !== filters.mine) return false;
+                
+                // Check status
+                if (filters.status && emp.status !== filters.status) return false;
+                
+                return true;
+            });
         }
         
-        // Clear all employee data
-        function clearEmployeeData() {
-            localStorage.removeItem(EMPLOYEE_STORAGE_KEY);
-        }
-        
-        // Update storage UI information
-        function updateStorageUI() {
-            const employees = getAllEmployees();
-            document.getElementById('employeeCount').textContent = employees.length;
+        // Render employee table
+        function renderEmployeeTable(employees) {
+            const tableBody = document.getElementById('employeeTableBody');
+            const resultCount = document.getElementById('resultCount');
             
-            // Calculate storage usage (for demonstration)
-            const storagePercent = Math.min(45, employees.length * 5);
-            document.getElementById('storageFill').style.width = `${storagePercent}%`;
+            if (employees.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                            <p>No employees found matching your criteria</p>
+                        </td>
+                    </tr>
+                `;
+                resultCount.textContent = 'Showing 0 results';
+                return;
+            }
+            
+            let tableHtml = '';
+            employees.forEach(emp => {
+                tableHtml += `
+                    <tr>
+                        <td>${emp.id}</td>
+                        <td>${emp.first_name} ${emp.last_name}</td>
+                        <td>${emp.designation}</td>
+                        <td>${emp.place_of_employment}</td>
+                        <td><span class="badge ${emp.status === 'Active' ? 'bg-success' : 'bg-danger'}">${emp.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary action-btn view-btn" data-id="${emp.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-success action-btn pdf-btn" data-id="${emp.id}">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = tableHtml;
+            resultCount.textContent = `Showing ${employees.length} results`;
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    // In a real app, this would navigate to a detailed view
+                    alert(`View details for employee: ${id}`);
+                });
+            });
+            
+            document.querySelectorAll('.pdf-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const employee = getAllEmployees().find(emp => emp.id === id);
+                    if (employee) {
+                        showPdfView(employee);
+                    }
+                });
+            });
+        }
+        
+        // Show PDF view
+        function showPdfView(employee) {
+            // Update the PDF view with employee data
+            document.getElementById('pdfId').textContent = employee.id;
+            document.getElementById('pdfName').textContent = `${employee.first_name} ${employee.last_name}`;
+            document.getElementById('pdfDesignation').textContent = employee.designation;
+            document.getElementById('pdfFather').textContent = employee.father_spouse_name;
+            document.getElementById('pdfFormA').textContent = employee.formA_number;
+            document.getElementById('pdfBlood').textContent = employee.blood_group;
+            document.getElementById('pdfMobile').textContent = employee.mobile;
+            document.getElementById('pdfDoj').textContent = new Date(employee.date_of_joining).toLocaleDateString();
+            document.getElementById('pdfMine').textContent = employee.place_of_employment;
+            document.getElementById('pdfStatus').textContent = employee.status;
+            document.getElementById('pdfAddress').textContent = employee.permanent_address;
+            
+            // Generate QR code
+            const qrContainer = document.getElementById('pdfQrCode');
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: `JSPL Employee ID: ${employee.id}\nName: ${employee.first_name} ${employee.last_name}\nMine: ${employee.place_of_employment}`,
+                width: 100,
+                height: 100,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Show the PDF section
+            showSection('generatePdfSection');
+        }
+        
+        // Generate PDF
+        function generatePDF() {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Add header
+            pdf.setFontSize(16);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(0, 85, 164); // JSPL Blue
+            pdf.text("Utkal C Coal Mine of JSPL", 105, 20, null, null, 'center');
+            pdf.setFontSize(14);
+            pdf.text("EMPLOYEE REGISTER FORM A", 105, 28, null, null, 'center');
+            pdf.setFontSize(12);
+            pdf.setTextColor(0, 0, 0);
+            pdf.text("(See Rule 2(1) Part A and Part B)", 105, 34, null, null, 'center');
+            
+            // Add employee details
+            pdf.setFontSize(12);
+            pdf.setFont("helvetica", "normal");
+            
+            // Draw photo placeholder
+            pdf.setDrawColor(200, 200, 200);
+            pdf.setFillColor(245, 245, 245);
+            pdf.rect(20, 45, 40, 50, 'F');
+            pdf.text("Employee Photo", 40, 75, null, null, 'center');
+            
+            // Employee details
+            const employee = {
+                id: document.getElementById('pdfId').textContent,
+                name: document.getElementById('pdfName').textContent,
+                designation: document.getElementById('pdfDesignation').textContent,
+                father: document.getElementById('pdfFather').textContent,
+                formA: document.getElementById('pdfFormA').textContent,
+                blood: document.getElementById('pdfBlood').textContent,
+                mobile: document.getElementById('pdfMobile').textContent,
+                doj: document.getElementById('pdfDoj').textContent,
+                mine: document.getElementById('pdfMine').textContent,
+                status: document.getElementById('pdfStatus').textContent,
+                address: document.getElementById('pdfAddress').textContent
+            };
+            
+            pdf.text(`Employee ID: ${employee.id}`, 70, 50);
+            pdf.text(`Full Name: ${employee.name}`, 70, 58);
+            pdf.text(`Designation: ${employee.designation}`, 70, 66);
+            pdf.text(`S/W/D: ${employee.father}`, 70, 74);
+            pdf.text(`A Form: ${employee.formA}`, 70, 82);
+            pdf.text(`Blood Group: ${employee.blood}`, 70, 90);
+            pdf.text(`Mobile: ${employee.mobile}`, 70, 98);
+            pdf.text(`Date of Joining: ${employee.doj}`, 70, 106);
+            pdf.text(`Mine Location: ${employee.mine}`, 70, 114);
+            pdf.text(`Status: ${employee.status}`, 70, 122);
+            
+            // Address
+            pdf.text(`Address: ${employee.address}`, 20, 130);
+            
+            // Add QR code
+            const qrSize = 50;
+            const qrX = 160;
+            const qrY = 45;
+            const qrData = `JSPL Employee ID: ${employee.id}\nName: ${employee.name}\nDesignation: ${employee.designation}\nMine: ${employee.mine}`;
+            
+            // Draw QR code background
+            pdf.setFillColor(255, 255, 255);
+            pdf.rect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 20, 'F');
+            
+            // Generate QR code
+            const qrCanvas = document.createElement('canvas');
+            new QRCode(qrCanvas, {
+                text: qrData,
+                width: qrSize,
+                height: qrSize,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Convert canvas to image
+            const qrImage = qrCanvas.toDataURL('image/png');
+            pdf.addImage(qrImage, 'PNG', qrX, qrY, qrSize, qrSize);
+            
+            pdf.text('Scan to verify', qrX + qrSize/2, qrY + qrSize + 10, null, null, 'center');
+            
+            // Add footer
+            pdf.setLineWidth(0.5);
+            pdf.line(30, 180, 80, 180);
+            pdf.line(130, 180, 180, 180);
+            pdf.text("Signature of Contractor", 55, 185, null, null, 'center');
+            pdf.text("Signature of Employee", 155, 185, null, null, 'center');
+            
+            // Add page number
+            pdf.setFontSize(10);
+            pdf.text("Page 1 of 1", 105, 290, null, null, 'center');
+            
+            // Show in preview
+            const pdfData = pdf.output('datauristring');
+            document.querySelector('.pdf-view').innerHTML = `<iframe src="${pdfData}" style="width:100%; height:100%; border:none"></iframe>`;
+            
+            showNotification('PDF generated successfully!');
         }
         
         // Show notification
@@ -1369,112 +1814,44 @@
             }, 3000);
         }
         
-        // Generate QR Code
-        function generateQRCode(elementId, content) {
-            // Clear previous QR code
-            document.getElementById(elementId).innerHTML = '';
-            
-            // Generate new QR code
-            new QRCode(document.getElementById(elementId), {
-                text: content,
-                width: 100,
-                height: 100,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('#dashboardSection, #addEmployeeSection, #viewEmployeeSection, #generatePdfSection').forEach(el => {
+                el.classList.add('d-none');
             });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('d-none');
+            
+            // Update breadcrumb
+            const breadcrumb = document.getElementById('breadcrumb');
+            let sectionName = '';
+            
+            switch(sectionId) {
+                case 'dashboardSection':
+                    sectionName = 'Dashboard';
+                    break;
+                case 'addEmployeeSection':
+                    sectionName = 'Add Employee Details';
+                    break;
+                case 'viewEmployeeSection':
+                    sectionName = 'View Employees';
+                    break;
+                case 'generatePdfSection':
+                    sectionName = 'Generate ID Card';
+                    break;
+            }
+            
+            breadcrumb.innerHTML = `
+                <li class="breadcrumb-item"><a href="#" data-section="dashboard">Mine Dashboard</a></li>
+                <li class="breadcrumb-item active">${sectionName}</li>
+            `;
         }
         
-        // Generate PDF
-        function generatePDF() {
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            
-            // Add header
-            pdf.setFontSize(16);
-            pdf.setFont("helvetica", "bold");
-            pdf.setTextColor(0, 85, 164); // JSPL Blue
-            pdf.text("JINDAL STEEL & POWER (JSPL)", 105, 20, null, null, 'center');
-            pdf.setFontSize(12);
-            pdf.setTextColor(0, 0, 0);
-            pdf.text("Utkal C Coal Mine, Angul, Odisha", 105, 27, null, null, 'center');
-            
-            // Add employee photo placeholder
-            pdf.setDrawColor(200, 200, 200);
-            pdf.setFillColor(245, 245, 245);
-            pdf.rect(30, 40, 40, 50, 'F');
-            pdf.text("Employee Photo", 50, 70, null, null, 'center');
-            
-            // Employee details
-            pdf.setFontSize(14);
-            pdf.text("EMPLOYEE ID CARD", 105, 35, null, null, 'center');
-            
-            pdf.setFontSize(10);
-            pdf.text(`Employee ID: EMP-2023-056`, 80, 45);
-            pdf.text(`Full Name: Suraj Pandey`, 80, 52);
-            pdf.text(`Designation: Dumper Operator`, 80, 59);
-            pdf.text(`S/W/D: Paramananda Pandey`, 80, 66);
-            pdf.text(`A Form: ALPL131`, 80, 73);
-            pdf.text(`Blood Group: A+`, 80, 80);
-            pdf.text(`Mobile: 8932856726`, 80, 87);
-            pdf.text(`Date of Joining: 01-01-2023`, 80, 94);
-            pdf.text(`Address: AT/PO-HALDI, BALLIA, UTTAR PRADESH`, 30, 101);
-            
-            // Add QR code
-            pdf.setFontSize(8);
-            pdf.text("Scan to verify employee", 160, 130);
-            pdf.addImage(generateQRImage(), 'PNG', 155, 40, 40, 40);
-            
-            // Add footer
-            pdf.setLineWidth(0.5);
-            pdf.line(30, 160, 80, 160);
-            pdf.line(130, 160, 180, 160);
-            pdf.text("Signature of Contractor", 55, 165, null, null, 'center');
-            pdf.text("Signature of Employee", 155, 165, null, null, 'center');
-            
-            // Add page number
-            pdf.setFontSize(8);
-            pdf.text("Page 1 of 1", 105, 290, null, null, 'center');
-            
-            // Show in preview
-            const pdfData = pdf.output('datauristring');
-            document.querySelector('.pdf-view').innerHTML = `<iframe src="${pdfData}" style="width:100%; height:100%; border:none"></iframe>`;
-            
-            showNotification('PDF generated successfully!');
-        }
-        
-        // Generate QR code as image (for PDF)
-        function generateQRImage() {
-            // Create a canvas to draw QR code
-            const canvas = document.createElement('canvas');
-            canvas.width = 100;
-            canvas.height = 100;
-            const ctx = canvas.getContext('2d');
-            
-            // Draw background
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, 100, 100);
-            
-            // Draw QR code pattern (simplified)
-            ctx.fillStyle = '#000000';
-            
-            // Outer square
-            ctx.fillRect(10, 10, 80, 80);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(20, 20, 60, 60);
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(30, 30, 40, 40);
-            
-            // Inner pattern
-            ctx.fillRect(40, 15, 20, 20);
-            ctx.fillRect(15, 40, 20, 20);
-            ctx.fillRect(65, 40, 20, 20);
-            ctx.fillRect(40, 65, 20, 20);
-            
-            return canvas.toDataURL('image/png');
-        }
-        
-        // Initialize charts
-        function initCharts() {
+        // Initialize
+        function init() {
+            // Initialize charts
             // Employee chart
             const employeeCtx = document.getElementById('employeeChart').getContext('2d');
             new Chart(employeeCtx, {
@@ -1537,36 +1914,27 @@
                     }
                 }
             });
-        }
-        
-        // Navigation
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('#dashboardSection, #addEmployeeSection, #viewEmployeeSection').forEach(el => {
-                el.classList.add('d-none');
+            
+            // Generate QR codes for preview
+            const qr1 = document.getElementById('qrPreview1');
+            new QRCode(qr1, {
+                text: 'EMP-2023-056|Suraj Pandey|Dumper Operator|Utkal C Coal Mine',
+                width: 100,
+                height: 100,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
             });
             
-            // Show selected section
-            document.getElementById(sectionId).classList.remove('d-none');
-            
-            // Update breadcrumb
-            const breadcrumb = document.getElementById('breadcrumb');
-            breadcrumb.innerHTML = `
-                <li class="breadcrumb-item"><a href="#" data-section="dashboard">Mine Dashboard</a></li>
-                <li class="breadcrumb-item active">${sectionId === 'dashboardSection' ? 'Dashboard' : 
-                                                sectionId === 'addEmployeeSection' ? 'Add Employee Details' : 
-                                                'View Employee Details'}</li>
-            `;
-        }
-        
-        // Initialize
-        function init() {
-            // Generate QR codes for preview
-            generateQRCode('qrPreview1', 'EMP-2023-056|Suraj Pandey|Dumper Operator|Utkal C Coal Mine');
-            generateQRCode('qrPreview2', 'EMP-2023-042|Rajesh Kumar|Safety Officer|Utkal B1 Mine');
-            
-            // Initialize charts
-            initCharts();
+            const qr2 = document.getElementById('qrPreview2');
+            new QRCode(qr2, {
+                text: 'EMP-2023-042|Rajesh Kumar|Safety Officer|Utkal B1 Mine',
+                width: 100,
+                height: 100,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
             
             // Navigation event listeners
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -1597,6 +1965,46 @@
             
             // Generate PDF button
             document.getElementById('generatePdfBtn').addEventListener('click', generatePDF);
+            
+            // Back to search button
+            document.getElementById('backToSearch').addEventListener('click', function() {
+                showSection('viewEmployeeSection');
+            });
+            
+            // Search button
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const filters = {
+                    name: document.getElementById('searchName').value,
+                    id: document.getElementById('searchId').value,
+                    designation: document.getElementById('searchDesignation').value,
+                    mine: document.getElementById('searchMine').value,
+                    status: document.getElementById('searchStatus').value
+                };
+                
+                const results = searchEmployees(filters);
+                renderEmployeeTable(results);
+            });
+            
+            // Photo upload
+            document.getElementById('photoUpload').addEventListener('click', function() {
+                document.getElementById('employeePhoto').click();
+            });
+            
+            document.getElementById('employeePhoto').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const preview = document.getElementById('photoPreview');
+                        const placeholder = document.getElementById('photoPlaceholder');
+                        
+                        placeholder.classList.add('d-none');
+                        preview.src = event.target.result;
+                        preview.classList.remove('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
         }
         
         // Login functionality
@@ -1617,54 +2025,6 @@
         // Mobile sidebar toggle
         document.querySelector('.mobile-toggle').addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('active');
-        });
-        
-        // Handle form submission
-        document.getElementById('employeeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Collect form data
-            const formData = new FormData(this);
-            const employeeData = {};
-            
-            for (const [key, value] of formData.entries()) {
-                employeeData[key] = value;
-            }
-            
-            // Save employee
-            saveEmployee(employeeData);
-            showNotification('Employee details saved successfully!');
-            updateStorageUI();
-            
-            // Reset form
-            this.reset();
-            
-            // Set today's date for some fields
-            const today = new Date().toISOString().split('T')[0];
-            document.querySelector('input[name="date_of_joining"]').value = today;
-            document.querySelector('input[name="imz_pme_date"]').value = today;
-            document.querySelector('input[name="yt_certificate_date"]').value = today;
-        });
-        
-        // View employees button
-        document.getElementById('viewEmployeesBtn').addEventListener('click', function() {
-            const employees = getAllEmployees();
-            if (employees.length > 0) {
-                showSection('viewEmployeeSection');
-                document.querySelector('.nav-link.active').classList.remove('active');
-                document.querySelector('.nav-link[data-section="viewEmployee"]').classList.add('active');
-            } else {
-                showNotification('No employees found in storage.', 'error');
-            }
-        });
-        
-        // Clear storage button
-        document.getElementById('clearStorageBtn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to clear all employee data?')) {
-                clearEmployeeData();
-                showNotification('All employee data has been cleared', 'error');
-                updateStorageUI();
-            }
         });
         
         // Initialize form with today's date
