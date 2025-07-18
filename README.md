@@ -9,14 +9,14 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contractual Workers Information System</title>
+    <title>JSPL Contractual Workers System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0d4e96;
-            --secondary: #2c6eb5;
-            --accent: #ff6b00;
+            --jspl-blue: #0055a4;
+            --jspl-red: #c8102e;
+            --jspl-accent: #ffc72c;
             --dark: #1a2e4a;
             --light: #f5f7fa;
             --success: #28a745;
@@ -32,7 +32,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .login-container {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, var(--jspl-blue) 0%, #003a75 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -51,11 +51,41 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .login-header {
-            background: var(--primary);
+            background: var(--jspl-blue);
             color: white;
             padding: 25px 20px;
             text-align: center;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .jspl-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .jspl-logo-inner {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--jspl-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-align: center;
+            line-height: 1.2;
         }
         
         .login-header::after {
@@ -66,7 +96,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             transform: translateX(-50%);
             width: 30px;
             height: 30px;
-            background: var(--primary);
+            background: var(--jspl-blue);
             transform: rotate(45deg);
             z-index: 1;
         }
@@ -78,12 +108,12 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(13, 78, 150, 0.25);
+            border-color: var(--jspl-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 85, 164, 0.25);
         }
         
         .btn-login {
-            background: var(--primary);
+            background: var(--jspl-blue);
             color: white;
             font-weight: 600;
             padding: 10px;
@@ -92,7 +122,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .btn-login:hover {
-            background: #0a3d75;
+            background: #004080;
             transform: translateY(-2px);
         }
         
@@ -120,6 +150,35 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             padding: 20px 15px;
             background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-logo-inner {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--jspl-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-align: center;
+            line-height: 1;
         }
         
         .nav-link {
@@ -134,7 +193,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         .nav-link:hover, .nav-link.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-left: 3px solid var(--accent);
+            border-left: 3px solid var(--jspl-accent);
         }
         
         .nav-link i {
@@ -162,6 +221,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             z-index: 99;
             position: sticky;
             top: 0;
+            border-bottom: 3px solid var(--jspl-blue);
         }
         
         .breadcrumb {
@@ -172,7 +232,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .breadcrumb-item a {
-            color: var(--primary);
+            color: var(--jspl-blue);
             text-decoration: none;
             font-weight: 500;
         }
@@ -186,7 +246,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, var(--jspl-blue) 0%, var(--jspl-red) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -203,8 +263,8 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .section-title {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
+            color: var(--jspl-blue);
+            border-bottom: 2px solid var(--jspl-blue);
             padding-bottom: 10px;
             margin-bottom: 25px;
             font-weight: 600;
@@ -218,7 +278,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             bottom: -2px;
             width: 80px;
             height: 2px;
-            background: var(--accent);
+            background: var(--jspl-accent);
         }
         
         .card {
@@ -227,6 +287,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             border: none;
             margin-bottom: 25px;
             transition: transform 0.3s;
+            border-top: 3px solid var(--jspl-blue);
         }
         
         .card:hover {
@@ -239,14 +300,14 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             font-weight: 600;
             padding: 15px 20px;
             border-radius: 10px 10px 0 0 !important;
-            color: var(--primary);
+            color: var(--jspl-blue);
             display: flex;
             align-items: center;
         }
         
         .card-header i {
             margin-right: 10px;
-            color: var(--accent);
+            color: var(--jspl-accent);
         }
         
         .form-section {
@@ -260,7 +321,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .btn-primary {
-            background: var(--primary);
+            background: var(--jspl-blue);
             border: none;
             padding: 10px 25px;
             font-weight: 600;
@@ -268,17 +329,18 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         }
         
         .btn-primary:hover {
-            background: #0a3d75;
+            background: #004080;
             transform: translateY(-2px);
         }
         
         .btn-outline-primary {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: var(--jspl-blue);
+            color: var(--jspl-blue);
         }
         
         .btn-outline-primary:hover {
-            background: var(--primary);
+            background: var(--jspl-blue);
+            color: white;
         }
         
         .status-indicator {
@@ -366,7 +428,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             border-radius: 8px;
             padding: 15px;
             margin-top: 20px;
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid var(--jspl-blue);
         }
         
         .storage-status {
@@ -385,15 +447,25 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
         
         .storage-fill {
             height: 100%;
-            background: var(--primary);
+            background: var(--jspl-blue);
             border-radius: 4px;
             width: 45%;
         }
         
         .storage-count {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--jspl-blue);
             font-size: 1.2rem;
+        }
+        
+        .jspl-badge {
+            background: var(--jspl-red);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -402,8 +474,13 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
     <div id="loginPage" class="login-container">
         <div class="login-card">
             <div class="login-header">
+                <div class="jspl-logo">
+                    <div class="jspl-logo-inner">
+                        JSPL
+                    </div>
+                </div>
                 <h2 class="mb-1">Contractual Workers Information System</h2>
-                <h5 class="mb-0">MAHANADI COALFIELDS LIMITED</h5>
+                <h5 class="mb-0">Jindal Steel & Power (JSPL)</h5>
             </div>
             <div class="login-body">
                 <form id="loginForm">
@@ -411,18 +488,20 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                         <label class="form-label">Area Name</label>
                         <select class="form-select">
                             <option selected disabled>Choose Area Name</option>
-                            <option>Talcher Area</option>
-                            <option>Ib Valley Area</option>
-                            <option>Jagannath Area</option>
+                            <option>Angul</option>
+                            <option>Barbil</option>
+                            <option>Raigarh</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Mine Name</label>
                         <select class="form-select">
                             <option selected disabled>Choose Mine Name</option>
-                            <option>Jagannath OCP</option>
-                            <option>Bharatpur OCP</option>
-                            <option>Lingaraj OCP</option>
+                            <option>Utkal C Coal Mine</option>
+                            <option>Utkal B1 Mine</option>
+                            <option>Utkal B2 Mine</option>
+                            <option>Tensa Mine</option>
+                            <option>Kesia Mine</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -453,13 +532,18 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
     <div id="dashboardPage" class="d-none">
         <div class="dashboard-container">
             <div class="sidebar">
-                <div class="sidebar-header d-flex align-items-center">
+                <div class="sidebar-header">
                     <button class="mobile-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="ms-3">
-                        <h4 class="mb-0">JAGANNATH</h4>
-                        <small class="opacity-75">Jagannath OCP</small>
+                    <div class="sidebar-logo">
+                        <div class="sidebar-logo-inner">
+                            JSPL
+                        </div>
+                    </div>
+                    <div class="ms-2">
+                        <h5 class="mb-0">Jindal Steel & Power</h5>
+                        <small class="opacity-75">Contractual Workers System</small>
                     </div>
                 </div>
                 <div class="nav flex-column">
@@ -517,7 +601,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                 </div>
                 
                 <div class="content-area">
-                    <h3 class="section-title">Employee Details</h3>
+                    <h3 class="section-title">Employee Details <span class="jspl-badge">JSPL</span></h3>
                     
                     <form id="employeeForm">
                         <div class="card">
@@ -573,10 +657,12 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                                         <div class="mb-3">
                                             <label class="form-label">Name of the Establishment</label>
                                             <select class="form-select" name="establishment_name" required>
-                                                <option selected disabled>Choose Name of the Establishment</option>
-                                                <option>Jagannath OCP</option>
-                                                <option>Bharatpur OCP</option>
-                                                <option>Lingaraj OCP</option>
+                                                <option selected disabled>Choose Establishment</option>
+                                                <option>Utkal C Coal Mine</option>
+                                                <option>Utkal B1 Mine</option>
+                                                <option>Utkal B2 Mine</option>
+                                                <option>Tensa Mine</option>
+                                                <option>Kesia Mine</option>
                                             </select>
                                         </div>
                                         <div class="mb-3">
@@ -620,11 +706,11 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                             </div>
                         </div>
                         
-                        <h3 class="section-title mt-5">Project Name</h3>
+                        <h3 class="section-title mt-5">Project Details <span class="jspl-badge">JSPL</span></h3>
                         
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-project-diagram"></i> Project Details
+                                <i class="fas fa-project-diagram"></i> Project Information
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -641,10 +727,12 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                                             <label class="form-label">Designation</label>
                                             <select class="form-select" name="designation" required>
                                                 <option selected disabled>Choose Designation</option>
-                                                <option>Manager</option>
-                                                <option>Supervisor</option>
-                                                <option>Worker</option>
-                                                <option>Technician</option>
+                                                <option>Mine Supervisor</option>
+                                                <option>Heavy Equipment Operator</option>
+                                                <option>Blasting Technician</option>
+                                                <option>Safety Officer</option>
+                                                <option>Geologist</option>
+                                                <option>Maintenance Engineer</option>
                                             </select>
                                         </div>
                                         <div class="mb-3">
@@ -707,7 +795,14 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Place of Employment</label>
-                                            <input type="text" class="form-control" name="place_of_employment" required>
+                                            <select class="form-select" name="place_of_employment" required>
+                                                <option selected disabled>Choose Mine</option>
+                                                <option>Utkal C Coal Mine</option>
+                                                <option>Utkal B1 Mine</option>
+                                                <option>Utkal B2 Mine</option>
+                                                <option>Tensa Mine</option>
+                                                <option>Kesia Mine</option>
+                                            </select>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Nominee Address</label>
@@ -722,7 +817,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                             </div>
                         </div>
                         
-                        <h3 class="section-title mt-5">Department Details</h3>
+                        <h3 class="section-title mt-5">Department Details <span class="jspl-badge">JSPL</span></h3>
                         
                         <div class="card">
                             <div class="card-header">
@@ -774,7 +869,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Employee Data Management using localStorage
-        const EMPLOYEE_STORAGE_KEY = 'contractual_employees';
+        const EMPLOYEE_STORAGE_KEY = 'jspl_employees';
         
         // Initialize sample data if empty
         function initializeEmployeeData() {
@@ -782,13 +877,13 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                 const sampleData = [
                     {
                         id: Date.now(),
-                        formA_number: 'FA-2023-001',
-                        establishment_name: 'Jagannath OCP',
+                        formA_number: 'JSPL-2023-001',
+                        establishment_name: 'Utkal C Coal Mine',
                         sl_no: '001',
                         employee_register: 'EMP-001',
                         gender: 'Male',
                         father_spouse_name: 'Rajesh Sharma',
-                        education: 'B.Tech',
+                        education: 'B.Tech Mining',
                         date_of_joining: '2023-01-15',
                         employment_type: 'Permanent',
                         mobile: '9876543210',
@@ -797,30 +892,28 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
                         bank_account_no: '123456789012',
                         bank_name: 'State Bank of India',
                         date_of_exit: '',
-                        permanent_address: '123 Main St, Jagannathpur',
+                        permanent_address: '123 Main St, Barbil, Odisha',
                         date_of_first_appointment: '2023-01-15',
                         token_number: 'TKN-001',
                         yt_certificate_date: '2023-01-20',
-                        nominee_mobile: '9876543211',
-                        relationship: 'Father',
                         first_name: 'Amit',
                         last_name: 'Sharma',
                         nationality: 'Indian',
                         date_of_birth: '1990-05-10',
-                        designation: 'Supervisor',
+                        designation: 'Mine Supervisor',
                         category_address: 'Category A',
                         uan: 'UAN001',
                         pan_number: 'ABCDE1234F',
                         aadhar_number: '123412341234',
                         ifsc_code: 'SBIN0001234',
                         service_book: 'SB-001',
-                        present_address: '123 Main St, Jagannathpur',
+                        present_address: 'Staff Quarter, Utkal C Coal Mine',
                         reason_of_exit: '',
                         identification_mark: 'Mole on left cheek',
                         imz_pme_date: '2023-02-01',
-                        place_of_employment: 'Jagannath OCP',
+                        place_of_employment: 'Utkal C Coal Mine',
                         nominee_name: 'Rajesh Sharma',
-                        nominee_address: '123 Main St, Jagannathpur',
+                        nominee_address: '123 Main St, Barbil, Odisha',
                         blood_group: 'B+',
                         nit_number: 'NIT-001'
                     }
@@ -918,6 +1011,12 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             
             // Reset form
             this.reset();
+            
+            // Set today's date for some fields
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="date_of_joining"]').value = today;
+            document.querySelector('input[name="imz_pme_date"]').value = today;
+            document.querySelector('input[name="yt_certificate_date"]').value = today;
         });
         
         // View employees button
@@ -945,6 +1044,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
             document.querySelector('input[name="date_of_joining"]').value = today;
             document.querySelector('input[name="imz_pme_date"]').value = today;
             document.querySelector('input[name="yt_certificate_date"]').value = today;
+            document.querySelector('input[name="date_of_first_appointment"]').value = today;
         });
     </script>
 </body>
