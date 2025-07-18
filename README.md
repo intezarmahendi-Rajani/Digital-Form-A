@@ -87,7 +87,7 @@ For Utkal C Coal Mine of Jindal Steel and Power Ltd digital Form A for Mining em
           <option>Choose Area Name</option>
           <option>Angul</option>
           <option>Tamnar</option>
-          option>Kasia</option>
+          <option>Kasia</option>
         </select>
       </div>
       <div class="form-group">
