@@ -1,10 +1,13 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSPL Contractual Workers System</title>
+    <title>JSPL Employee Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --jspl-blue: #0055a4;
@@ -460,6 +463,159 @@
             font-weight: 600;
             margin-left: 5px;
         }
+        
+        /* ID Card Styles */
+        .id-card {
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .id-header {
+            background: var(--jspl-blue);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .id-header h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        
+        .id-header h3 {
+            margin: 5px 0 0;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        
+        .id-body {
+            padding: 20px;
+        }
+        
+        .employee-photo {
+            width: 150px;
+            height: 180px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .employee-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 12px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #444;
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            font-size: 1.05rem;
+            color: #333;
+            padding: 5px 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        
+        .id-footer {
+            padding: 15px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .signature-area {
+            text-align: center;
+            width: 45%;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 80%;
+            margin: 0 auto 5px;
+            padding-top: 20px;
+        }
+        
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .pdf-view {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            height: 600px;
+            overflow-y: auto;
+        }
+        
+        .employee-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .employee-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--jspl-blue);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .employee-id {
+            background: var(--jspl-blue);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .employee-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .employee-position {
+            font-size: 1.1rem;
+            color: var(--jspl-red);
+        }
     </style>
 </head>
 <body>
@@ -540,34 +696,34 @@
                     </div>
                 </div>
                 <div class="nav flex-column">
-                    <a class="nav-link active">
+                    <a class="nav-link active" data-section="dashboard">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="manageEmployee">
                         <i class="fas fa-users"></i> Manage Employee
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="addEmployee">
                         <i class="fas fa-user-plus"></i> Add Employee Details
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="viewEmployee">
                         <i class="fas fa-list"></i> View all Employee
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="uploadBulk">
                         <i class="fas fa-file-upload"></i> Upload Bulk Data
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="deepEstablish">
                         <i class="fas fa-id-card"></i> Deep And Establish ID
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="manageDoc">
                         <i class="fas fa-file"></i> Manage Document
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="manageGallery">
                         <i class="fas fa-images"></i> Manage Gallery
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="manageExam">
                         <i class="fas fa-book"></i> Manage Exam
                     </a>
-                    <a class="nav-link">
+                    <a class="nav-link" data-section="manageReport">
                         <i class="fas fa-chart-bar"></i> Manage Report
                     </a>
                 </div>
@@ -577,10 +733,9 @@
                 <div class="topbar">
                     <div>
                         <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Mine Dashboard</a></li>
-                                <li class="breadcrumb-item active">Add Employee Details</li>
-                                <li class="breadcrumb-item">/ Manage Master / Add Employee Details</li>
+                            <ol class="breadcrumb" id="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" data-section="dashboard">Mine Dashboard</a></li>
+                                <li class="breadcrumb-item active">Dashboard</li>
                             </ol>
                         </nav>
                     </div>
@@ -594,261 +749,514 @@
                 </div>
                 
                 <div class="content-area">
-                    <h3 class="section-title">Employee Details <span class="jspl-badge">JSPL</span></h3>
-                    
-                    <form id="employeeForm">
+                    <!-- Dashboard Section -->
+                    <div id="dashboardSection">
+                        <h3 class="section-title">Mine Dashboard <span class="jspl-badge">JSPL</span></h3>
+                        
+                        <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Employees</h5>
+                                        <h2 class="card-text text-primary">247</h2>
+                                        <p class="text-muted">Active: 235</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">New This Month</h5>
+                                        <h2 class="card-text text-success">18</h2>
+                                        <p class="text-muted">Contract Workers</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pending Documents</h5>
+                                        <h2 class="card-text text-danger">32</h2>
+                                        <p class="text-muted">Require Attention</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Safety Compliance</h5>
+                                        <h2 class="card-text text-warning">92%</h2>
+                                        <p class="text-muted">Above Target</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-user"></i> Personal Information
+                                <i class="fas fa-chart-line"></i> Employee Statistics
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Form A Number</label>
-                                            <input type="text" class="form-control" name="formA_number" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">SL NO</label>
-                                            <input type="text" class="form-control" name="sl_no" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Gender</label>
-                                            <select class="form-select" name="gender" required>
-                                                <option selected disabled>Choose Gender</option>
-                                                <option>Male</option>
-                                                <option>Female</option>
-                                                <option>Other</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Date of Joining</label>
-                                            <input type="date" class="form-control" name="date_of_joining" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Employment Type</label>
-                                            <input type="text" class="form-control" name="employment_type" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">ESIC IP</label>
-                                            <input type="text" class="form-control" name="esic_ip" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Bank Name</label>
-                                            <input type="text" class="form-control" name="bank_name" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Permanent Address</label>
-                                            <textarea class="form-control" rows="2" name="permanent_address" required></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Token Number</label>
-                                            <input type="text" class="form-control" name="token_number" required>
-                                        </div>
+                                    <div class="col-md-8">
+                                        <canvas id="employeeChart" height="250"></canvas>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Name of the Establishment</label>
-                                            <select class="form-select" name="establishment_name" required>
-                                                <option selected disabled>Choose Establishment</option>
-                                                <option>Utkal C Coal Mine</option>
-                                                <option>Utkal B1 Mine</option>
-                                                <option>Utkal B2 Mine</option>
-                                                <option>Tensa Mine</option>
-                                                <option>Kesia Mine</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Employee Register</label>
-                                            <input type="text" class="form-control" name="employee_register" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Father / Spouse Name</label>
-                                            <input type="text" class="form-control" name="father_spouse_name" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Education</label>
-                                            <input type="text" class="form-control" name="education" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Mobile</label>
-                                            <input type="tel" class="form-control" name="mobile" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">LWF</label>
-                                            <input type="text" class="form-control" name="lwf" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Bank Account No</label>
-                                            <input type="text" class="form-control" name="bank_account_no" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Date of Exit</label>
-                                            <input type="date" class="form-control" name="date_of_exit">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Date of First Appointment</label>
-                                            <input type="date" class="form-control" name="date_of_first_appointment" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">YT Certificate Date</label>
-                                            <input type="date" class="form-control" name="yt_certificate_date" required>
-                                        </div>
+                                    <div class="col-md-4">
+                                        <canvas id="departmentChart" height="250"></canvas>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <h3 class="section-title mt-5">Project Details <span class="jspl-badge">JSPL</span></h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-list"></i> Recent Employees
+                            </div>
+                            <div class="card-body">
+                                <div class="employee-card">
+                                    <div class="employee-card-header">
+                                        <div>
+                                            <span class="employee-id">EMP-2023-056</span>
+                                            <h4 class="employee-name">Suraj Pandey</h4>
+                                        </div>
+                                        <span class="employee-position">Dumper Operator</span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="info-item">
+                                                <span class="info-label">Employee ID:</span>
+                                                <span class="info-value">EMP-2023-056</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">A Form:</span>
+                                                <span class="info-value">ALPL131</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Mobile:</span>
+                                                <span class="info-value">8932856726</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Mine:</span>
+                                                <span class="info-value">Utkal C Coal Mine</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="qr-code" id="qrPreview1"></div>
+                                            <button class="btn btn-sm btn-primary mt-2">Generate ID Card</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="employee-card">
+                                    <div class="employee-card-header">
+                                        <div>
+                                            <span class="employee-id">EMP-2023-042</span>
+                                            <h4 class="employee-name">Rajesh Kumar</h4>
+                                        </div>
+                                        <span class="employee-position">Safety Officer</span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="info-item">
+                                                <span class="info-label">Employee ID:</span>
+                                                <span class="info-value">EMP-2023-042</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">A Form:</span>
+                                                <span class="info-value">ALPL129</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Mobile:</span>
+                                                <span class="info-value">7890123456</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Mine:</span>
+                                                <span class="info-value">Utkal B1 Mine</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <div class="qr-code" id="qrPreview2"></div>
+                                            <button class="btn btn-sm btn-primary mt-2">Generate ID Card</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Employee Section -->
+                    <div id="addEmployeeSection" class="d-none">
+                        <h3 class="section-title">Add Employee Details <span class="jspl-badge">JSPL</span></h3>
+                        
+                        <form id="employeeForm">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-user"></i> Personal Information
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Form A Number</label>
+                                                <input type="text" class="form-control" name="formA_number" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">SL NO</label>
+                                                <input type="text" class="form-control" name="sl_no" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Gender</label>
+                                                <select class="form-select" name="gender" required>
+                                                    <option selected disabled>Choose Gender</option>
+                                                    <option>Male</option>
+                                                    <option>Female</option>
+                                                    <option>Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Date of Joining</label>
+                                                <input type="date" class="form-control" name="date_of_joining" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Employment Type</label>
+                                                <input type="text" class="form-control" name="employment_type" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">ESIC IP</label>
+                                                <input type="text" class="form-control" name="esic_ip" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Bank Name</label>
+                                                <input type="text" class="form-control" name="bank_name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Permanent Address</label>
+                                                <textarea class="form-control" rows="2" name="permanent_address" required></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Token Number</label>
+                                                <input type="text" class="form-control" name="token_number" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Name of the Establishment</label>
+                                                <select class="form-select" name="establishment_name" required>
+                                                    <option selected disabled>Choose Establishment</option>
+                                                    <option>Utkal C Coal Mine</option>
+                                                    <option>Utkal B1 Mine</option>
+                                                    <option>Utkal B2 Mine</option>
+                                                    <option>Tensa Mine</option>
+                                                    <option>Kesia Mine</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Employee Register</label>
+                                                <input type="text" class="form-control" name="employee_register" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Father / Spouse Name</label>
+                                                <input type="text" class="form-control" name="father_spouse_name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Education</label>
+                                                <input type="text" class="form-control" name="education" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Mobile</label>
+                                                <input type="tel" class="form-control" name="mobile" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">LWF</label>
+                                                <input type="text" class="form-control" name="lwf" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Bank Account No</label>
+                                                <input type="text" class="form-control" name="bank_account_no" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Date of Exit</label>
+                                                <input type="date" class="form-control" name="date_of_exit">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Date of First Appointment</label>
+                                                <input type="date" class="form-control" name="date_of_first_appointment" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">YT Certificate Date</label>
+                                                <input type="date" class="form-control" name="yt_certificate_date" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="section-title mt-5">Project Details <span class="jspl-badge">JSPL</span></h3>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-project-diagram"></i> Project Information
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">First Name</label>
+                                                <input type="text" class="form-control" name="first_name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nationality</label>
+                                                <input type="text" class="form-control" name="nationality" value="Indian" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Designation</label>
+                                                <select class="form-select" name="designation" required>
+                                                    <option selected disabled>Choose Designation</option>
+                                                    <option>Mine Supervisor</option>
+                                                    <option>Heavy Equipment Operator</option>
+                                                    <option>Blasting Technician</option>
+                                                    <option>Safety Officer</option>
+                                                    <option>Geologist</option>
+                                                    <option>Maintenance Engineer</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">UAN</label>
+                                                <input type="text" class="form-control" name="uan" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Aadhar Number</label>
+                                                <input type="text" class="form-control" name="aadhar_number" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Service Book</label>
+                                                <input type="text" class="form-control" name="service_book" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Reason of Exit</label>
+                                                <input type="text" class="form-control" name="reason_of_exit">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">IMZ/PME DATE</label>
+                                                <input type="date" class="form-control" name="imz_pme_date" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nominee Name</label>
+                                                <input type="text" class="form-control" name="nominee_name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Blood Group</label>
+                                                <input type="text" class="form-control" name="blood_group" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Last Name</label>
+                                                <input type="text" class="form-control" name="last_name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Date of Birth</label>
+                                                <input type="date" class="form-control" name="date_of_birth" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Category Address</label>
+                                                <input type="text" class="form-control" name="category_address" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">PAN Number</label>
+                                                <input type="text" class="form-control" name="pan_number" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">IFSC Code</label>
+                                                <input type="text" class="form-control" name="ifsc_code" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Present Address</label>
+                                                <textarea class="form-control" rows="2" name="present_address" required></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Identification Mark</label>
+                                                <input type="text" class="form-control" name="identification_mark" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Place of Employment</label>
+                                                <select class="form-select" name="place_of_employment" required>
+                                                    <option selected disabled>Choose Mine</option>
+                                                    <option>Utkal C Coal Mine</option>
+                                                    <option>Utkal B1 Mine</option>
+                                                    <option>Utkal B2 Mine</option>
+                                                    <option>Tensa Mine</option>
+                                                    <option>Kesia Mine</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nominee Address</label>
+                                                <textarea class="form-control" rows="2" name="nominee_address" required></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">NIT NUMBER</label>
+                                                <input type="text" class="form-control" name="nit_number" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="section-title mt-5">Department Details <span class="jspl-badge">JSPL</span></h3>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-building"></i> Department Information
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i> Department details will be automatically populated based on project assignment.
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary me-2">
+                                            <i class="fas fa-save me-1"></i> Save Employee Details
+                                        </button>
+                                        <button type="reset" class="btn btn-outline-primary">
+                                            <i class="fas fa-times me-1"></i> Reset Form
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <div class="data-storage-info">
+                            <h5><i class="fas fa-database me-2"></i> Employee Data Storage</h5>
+                            <div class="storage-status">
+                                <span>Current Employees: </span>
+                                <span class="storage-count ms-2" id="employeeCount">0</span>
+                            </div>
+                            <div>Local Storage Status:</div>
+                            <div class="storage-bar">
+                                <div class="storage-fill" id="storageFill"></div>
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-outline-primary me-2" id="viewEmployeesBtn">
+                                    <i class="fas fa-eye me-1"></i> View All Employees
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" id="clearStorageBtn">
+                                    <i class="fas fa-trash-alt me-1"></i> Clear Storage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- View Employee Section -->
+                    <div id="viewEmployeeSection" class="d-none">
+                        <h3 class="section-title">Employee Details <span class="jspl-badge">JSPL</span></h3>
                         
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-project-diagram"></i> Project Information
+                                <i class="fas fa-search"></i> Search Employees
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">First Name</label>
-                                            <input type="text" class="form-control" name="first_name" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Nationality</label>
-                                            <input type="text" class="form-control" name="nationality" value="Indian" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Designation</label>
-                                            <select class="form-select" name="designation" required>
-                                                <option selected disabled>Choose Designation</option>
-                                                <option>Mine Supervisor</option>
-                                                <option>Heavy Equipment Operator</option>
-                                                <option>Blasting Technician</option>
-                                                <option>Safety Officer</option>
-                                                <option>Geologist</option>
-                                                <option>Maintenance Engineer</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">UAN</label>
-                                            <input type="text" class="form-control" name="uan" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Aadhar Number</label>
-                                            <input type="text" class="form-control" name="aadhar_number" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Service Book</label>
-                                            <input type="text" class="form-control" name="service_book" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Reason of Exit</label>
-                                            <input type="text" class="form-control" name="reason_of_exit">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">IMZ/PME DATE</label>
-                                            <input type="date" class="form-control" name="imz_pme_date" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Nominee Name</label>
-                                            <input type="text" class="form-control" name="nominee_name" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Blood Group</label>
-                                            <input type="text" class="form-control" name="blood_group" required>
-                                        </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" placeholder="Search by name or ID">
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Last Name</label>
-                                            <input type="text" class="form-control" name="last_name" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Date of Birth</label>
-                                            <input type="date" class="form-control" name="date_of_birth" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Category Address</label>
-                                            <input type="text" class="form-control" name="category_address" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">PAN Number</label>
-                                            <input type="text" class="form-control" name="pan_number" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">IFSC Code</label>
-                                            <input type="text" class="form-control" name="ifsc_code" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Present Address</label>
-                                            <textarea class="form-control" rows="2" name="present_address" required></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Identification Mark</label>
-                                            <input type="text" class="form-control" name="identification_mark" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Place of Employment</label>
-                                            <select class="form-select" name="place_of_employment" required>
-                                                <option selected disabled>Choose Mine</option>
-                                                <option>Utkal C Coal Mine</option>
-                                                <option>Utkal B1 Mine</option>
-                                                <option>Utkal B2 Mine</option>
-                                                <option>Tensa Mine</option>
-                                                <option>Kesia Mine</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Nominee Address</label>
-                                            <textarea class="form-control" rows="2" name="nominee_address" required></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">NIT NUMBER</label>
-                                            <input type="text" class="form-control" name="nit_number" required>
-                                        </div>
+                                    <div class="col-md-3 mb-3">
+                                        <select class="form-select">
+                                            <option selected>All Mines</option>
+                                            <option>Utkal C Coal Mine</option>
+                                            <option>Utkal B1 Mine</option>
+                                            <option>Utkal B2 Mine</option>
+                                            <option>Tensa Mine</option>
+                                            <option>Kesia Mine</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <select class="form-select">
+                                            <option selected>All Designations</option>
+                                            <option>Mine Supervisor</option>
+                                            <option>Heavy Equipment Operator</option>
+                                            <option>Blasting Technician</option>
+                                            <option>Safety Officer</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <h3 class="section-title mt-5">Department Details <span class="jspl-badge">JSPL</span></h3>
                         
                         <div class="card">
                             <div class="card-header">
-                                <i class="fas fa-building"></i> Department Information
+                                <i class="fas fa-id-card"></i> Employee ID Card
                             </div>
                             <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i> Department details will be automatically populated based on project assignment.
+                                <div class="id-card">
+                                    <div class="id-header">
+                                        <h2>JINDAL STEEL & POWER (JSPL)</h2>
+                                        <h3>Utkal C Coal Mine, Angul, Odisha</h3>
+                                    </div>
+                                    <div class="id-body">
+                                        <div class="employee-photo">Employee Photo</div>
+                                        <div class="employee-info">
+                                            <div class="info-item">
+                                                <span class="info-label">Employee ID</span>
+                                                <span class="info-value">EMP-2023-056</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Full Name</span>
+                                                <span class="info-value">Suraj Pandey</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Designation</span>
+                                                <span class="info-value">Dumper Operator</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">S/W/D</span>
+                                                <span class="info-value">Paramananda Pandey</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">A Form</span>
+                                                <span class="info-value">ALPL131</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Blood Group</span>
+                                                <span class="info-value">A+</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Mobile</span>
+                                                <span class="info-value">8932856726</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Date of Joining</span>
+                                                <span class="info-value">01-01-2023</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Address</span>
+                                                <span class="info-value">AT/PO-HALDI, BALLIA, UTTAR PRADESH</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="id-footer">
+                                        <div class="signature-area">
+                                            <div>Signature of Contractor</div>
+                                            <div class="signature-line"></div>
+                                        </div>
+                                        <div class="signature-area">
+                                            <div>Signature of Employee</div>
+                                            <div class="signature-line"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary me-2">
-                                        <i class="fas fa-save me-1"></i> Save Employee Details
+                                
+                                <div class="text-center mt-4">
+                                    <button id="generatePdfBtn" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-file-pdf me-2"></i> Generate PDF with QR Code
                                     </button>
-                                    <button type="reset" class="btn btn-outline-primary">
-                                        <i class="fas fa-times me-1"></i> Reset Form
-                                    </button>
+                                </div>
+                                
+                                <div class="pdf-view mt-4">
+                                    <div class="text-center">
+                                        <h4>PDF Preview</h4>
+                                        <p class="text-muted">Generated PDF will appear here</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
-                    
-                    <div class="data-storage-info">
-                        <h5><i class="fas fa-database me-2"></i> Employee Data Storage</h5>
-                        <div class="storage-status">
-                            <span>Current Employees: </span>
-                            <span class="storage-count ms-2" id="employeeCount">0</span>
-                        </div>
-                        <div>Local Storage Status:</div>
-                        <div class="storage-bar">
-                            <div class="storage-fill" id="storageFill"></div>
-                        </div>
-                        <div class="mt-2">
-                            <button class="btn btn-sm btn-outline-primary me-2" id="viewEmployeesBtn">
-                                <i class="fas fa-eye me-1"></i> View All Employees
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" id="clearStorageBtn">
-                                <i class="fas fa-trash-alt me-1"></i> Clear Storage
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -860,7 +1268,11 @@
     <div class="notification" id="notification"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Initialize libraries
+        const { jsPDF } = window.jspdf;
+        
         // Employee Data Management using localStorage
         const EMPLOYEE_STORAGE_KEY = 'jspl_employees';
         
@@ -957,6 +1369,236 @@
             }, 3000);
         }
         
+        // Generate QR Code
+        function generateQRCode(elementId, content) {
+            // Clear previous QR code
+            document.getElementById(elementId).innerHTML = '';
+            
+            // Generate new QR code
+            new QRCode(document.getElementById(elementId), {
+                text: content,
+                width: 100,
+                height: 100,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+        
+        // Generate PDF
+        function generatePDF() {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Add header
+            pdf.setFontSize(16);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(0, 85, 164); // JSPL Blue
+            pdf.text("JINDAL STEEL & POWER (JSPL)", 105, 20, null, null, 'center');
+            pdf.setFontSize(12);
+            pdf.setTextColor(0, 0, 0);
+            pdf.text("Utkal C Coal Mine, Angul, Odisha", 105, 27, null, null, 'center');
+            
+            // Add employee photo placeholder
+            pdf.setDrawColor(200, 200, 200);
+            pdf.setFillColor(245, 245, 245);
+            pdf.rect(30, 40, 40, 50, 'F');
+            pdf.text("Employee Photo", 50, 70, null, null, 'center');
+            
+            // Employee details
+            pdf.setFontSize(14);
+            pdf.text("EMPLOYEE ID CARD", 105, 35, null, null, 'center');
+            
+            pdf.setFontSize(10);
+            pdf.text(`Employee ID: EMP-2023-056`, 80, 45);
+            pdf.text(`Full Name: Suraj Pandey`, 80, 52);
+            pdf.text(`Designation: Dumper Operator`, 80, 59);
+            pdf.text(`S/W/D: Paramananda Pandey`, 80, 66);
+            pdf.text(`A Form: ALPL131`, 80, 73);
+            pdf.text(`Blood Group: A+`, 80, 80);
+            pdf.text(`Mobile: 8932856726`, 80, 87);
+            pdf.text(`Date of Joining: 01-01-2023`, 80, 94);
+            pdf.text(`Address: AT/PO-HALDI, BALLIA, UTTAR PRADESH`, 30, 101);
+            
+            // Add QR code
+            pdf.setFontSize(8);
+            pdf.text("Scan to verify employee", 160, 130);
+            pdf.addImage(generateQRImage(), 'PNG', 155, 40, 40, 40);
+            
+            // Add footer
+            pdf.setLineWidth(0.5);
+            pdf.line(30, 160, 80, 160);
+            pdf.line(130, 160, 180, 160);
+            pdf.text("Signature of Contractor", 55, 165, null, null, 'center');
+            pdf.text("Signature of Employee", 155, 165, null, null, 'center');
+            
+            // Add page number
+            pdf.setFontSize(8);
+            pdf.text("Page 1 of 1", 105, 290, null, null, 'center');
+            
+            // Show in preview
+            const pdfData = pdf.output('datauristring');
+            document.querySelector('.pdf-view').innerHTML = `<iframe src="${pdfData}" style="width:100%; height:100%; border:none"></iframe>`;
+            
+            showNotification('PDF generated successfully!');
+        }
+        
+        // Generate QR code as image (for PDF)
+        function generateQRImage() {
+            // Create a canvas to draw QR code
+            const canvas = document.createElement('canvas');
+            canvas.width = 100;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 100, 100);
+            
+            // Draw QR code pattern (simplified)
+            ctx.fillStyle = '#000000';
+            
+            // Outer square
+            ctx.fillRect(10, 10, 80, 80);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(20, 20, 60, 60);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(30, 30, 40, 40);
+            
+            // Inner pattern
+            ctx.fillRect(40, 15, 20, 20);
+            ctx.fillRect(15, 40, 20, 20);
+            ctx.fillRect(65, 40, 20, 20);
+            ctx.fillRect(40, 65, 20, 20);
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Employee chart
+            const employeeCtx = document.getElementById('employeeChart').getContext('2d');
+            new Chart(employeeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Employees Added',
+                        data: [12, 19, 15, 8, 14, 18, 22],
+                        backgroundColor: 'rgba(0, 85, 164, 0.7)',
+                        borderColor: 'rgba(0, 85, 164, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Employee Additions'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Department chart
+            const deptCtx = document.getElementById('departmentChart').getContext('2d');
+            new Chart(deptCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Operations', 'Maintenance', 'Safety', 'Administration', 'Logistics'],
+                    datasets: [{
+                        label: 'Employees by Department',
+                        data: [85, 42, 28, 36, 56],
+                        backgroundColor: [
+                            'rgba(0, 85, 164, 0.7)',
+                            'rgba(200, 16, 46, 0.7)',
+                            'rgba(255, 199, 44, 0.7)',
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(108, 117, 125, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Department Distribution'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('#dashboardSection, #addEmployeeSection, #viewEmployeeSection').forEach(el => {
+                el.classList.add('d-none');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('d-none');
+            
+            // Update breadcrumb
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = `
+                <li class="breadcrumb-item"><a href="#" data-section="dashboard">Mine Dashboard</a></li>
+                <li class="breadcrumb-item active">${sectionId === 'dashboardSection' ? 'Dashboard' : 
+                                                sectionId === 'addEmployeeSection' ? 'Add Employee Details' : 
+                                                'View Employee Details'}</li>
+            `;
+        }
+        
+        // Initialize
+        function init() {
+            // Generate QR codes for preview
+            generateQRCode('qrPreview1', 'EMP-2023-056|Suraj Pandey|Dumper Operator|Utkal C Coal Mine');
+            generateQRCode('qrPreview2', 'EMP-2023-042|Rajesh Kumar|Safety Officer|Utkal B1 Mine');
+            
+            // Initialize charts
+            initCharts();
+            
+            // Navigation event listeners
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    // Remove active from all
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    
+                    // Add active to clicked
+                    this.classList.add('active');
+                    
+                    // Show corresponding section
+                    const section = this.dataset.section;
+                    if (section === 'dashboard') showSection('dashboardSection');
+                    if (section === 'addEmployee') showSection('addEmployeeSection');
+                    if (section === 'viewEmployee') showSection('viewEmployeeSection');
+                });
+            });
+            
+            // Breadcrumb navigation
+            document.getElementById('breadcrumb').addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    showSection('dashboardSection');
+                    document.querySelector('.nav-link.active').classList.remove('active');
+                    document.querySelector('.nav-link[data-section="dashboard"]').classList.add('active');
+                }
+            });
+            
+            // Generate PDF button
+            document.getElementById('generatePdfBtn').addEventListener('click', generatePDF);
+        }
+        
         // Login functionality
         document.getElementById('loginBtn').addEventListener('click', function() {
             const username = document.getElementById('username').value;
@@ -966,6 +1608,7 @@
                 document.getElementById('loginPage').classList.add('d-none');
                 document.getElementById('dashboardPage').classList.remove('d-none');
                 initializeEmployeeData();
+                init();
             } else {
                 showNotification('Invalid username or password', 'error');
             }
@@ -974,15 +1617,6 @@
         // Mobile sidebar toggle
         document.querySelector('.mobile-toggle').addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('active');
-        });
-        
-        // Navigation link activation
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                navLinks.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-            });
         });
         
         // Handle form submission
@@ -1016,9 +1650,11 @@
         document.getElementById('viewEmployeesBtn').addEventListener('click', function() {
             const employees = getAllEmployees();
             if (employees.length > 0) {
-                alert(`${employees.length} employees found in storage.`);
+                showSection('viewEmployeeSection');
+                document.querySelector('.nav-link.active').classList.remove('active');
+                document.querySelector('.nav-link[data-section="viewEmployee"]').classList.add('active');
             } else {
-                alert('No employees found in storage.');
+                showNotification('No employees found in storage.', 'error');
             }
         });
         
