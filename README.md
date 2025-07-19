@@ -1481,6 +1481,7 @@
         
         // Employee Data Management using localStorage
         const EMPLOYEE_STORAGE_KEY = 'jspl_employees';
+        let currentEmployeeForPDF = null;
         
         // Initialize sample data if empty
         function initializeEmployeeData() {
@@ -1675,6 +1676,9 @@
         
         // Show PDF view
         function showPdfView(employee) {
+            // Store the current employee for PDF generation
+            currentEmployeeForPDF = employee;
+            
             // Update the PDF view with employee data
             document.getElementById('pdfId').textContent = employee.id;
             document.getElementById('pdfName').textContent = `${employee.first_name} ${employee.last_name}`;
@@ -1704,88 +1708,100 @@
             showSection('generatePdfSection');
         }
         
-        // Generate PDF
+        // Generate PDF with QR code
         function generatePDF() {
+            if (!currentEmployeeForPDF) {
+                showNotification('No employee data available for PDF generation', 'error');
+                return;
+            }
+            
+            const employee = currentEmployeeForPDF;
+            
+            // Create new PDF
             const pdf = new jsPDF('p', 'mm', 'a4');
             
             // Add header
             pdf.setFontSize(16);
             pdf.setFont("helvetica", "bold");
             pdf.setTextColor(0, 85, 164); // JSPL Blue
-            pdf.text("Utkal C Coal Mine of JSPL", 105, 20, null, null, 'center');
+            pdf.text("Utkal C Coal Mine of JSPL", 105, 15, null, null, 'center');
             pdf.setFontSize(14);
-            pdf.text("EMPLOYEE REGISTER FORM A", 105, 28, null, null, 'center');
+            pdf.text("EMPLOYEE REGISTER FORM A", 105, 22, null, null, 'center');
             pdf.setFontSize(12);
             pdf.setTextColor(0, 0, 0);
-            pdf.text("(See Rule 2(1) Part A and Part B)", 105, 34, null, null, 'center');
+            pdf.text("(See Rule 2(1) Part A and Part B)", 105, 28, null, null, 'center');
             
             // Add employee details
+            const startX = 20;
+            let startY = 45;
+            const lineHeight = 8;
+            
+            // Employee photo placeholder
+            pdf.setDrawColor(200, 200, 200);
+            pdf.setFillColor(245, 245, 245);
+            pdf.rect(startX, startY, 40, 50, 'F');
+            pdf.text("Employee Photo", startX + 20, startY + 25, null, null, 'center');
+            
+            // Employee details
             pdf.setFontSize(12);
             pdf.setFont("helvetica", "normal");
             
-            // Draw photo placeholder
-            pdf.setDrawColor(200, 200, 200);
-            pdf.setFillColor(245, 245, 245);
-            pdf.rect(20, 45, 40, 50, 'F');
-            pdf.text("Employee Photo", 40, 75, null, null, 'center');
+            let detailX = startX + 50;
+            let detailY = startY;
             
-            // Employee details
-            const employee = {
-                id: document.getElementById('pdfId').textContent,
-                name: document.getElementById('pdfName').textContent,
-                designation: document.getElementById('pdfDesignation').textContent,
-                father: document.getElementById('pdfFather').textContent,
-                formA: document.getElementById('pdfFormA').textContent,
-                blood: document.getElementById('pdfBlood').textContent,
-                mobile: document.getElementById('pdfMobile').textContent,
-                doj: document.getElementById('pdfDoj').textContent,
-                mine: document.getElementById('pdfMine').textContent,
-                status: document.getElementById('pdfStatus').textContent,
-                address: document.getElementById('pdfAddress').textContent
-            };
-            
-            pdf.text(`Employee ID: ${employee.id}`, 70, 50);
-            pdf.text(`Full Name: ${employee.name}`, 70, 58);
-            pdf.text(`Designation: ${employee.designation}`, 70, 66);
-            pdf.text(`S/W/D: ${employee.father}`, 70, 74);
-            pdf.text(`A Form: ${employee.formA}`, 70, 82);
-            pdf.text(`Blood Group: ${employee.blood}`, 70, 90);
-            pdf.text(`Mobile: ${employee.mobile}`, 70, 98);
-            pdf.text(`Date of Joining: ${employee.doj}`, 70, 106);
-            pdf.text(`Mine Location: ${employee.mine}`, 70, 114);
-            pdf.text(`Status: ${employee.status}`, 70, 122);
+            pdf.text(`Employee ID: ${employee.id}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`Full Name: ${employee.first_name} ${employee.last_name}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`Designation: ${employee.designation}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`S/W/D: ${employee.father_spouse_name}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`A Form: ${employee.formA_number}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`Blood Group: ${employee.blood_group}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`Mobile: ${employee.mobile}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`Date of Joining: ${new Date(employee.date_of_joining).toLocaleDateString()}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`Mine Location: ${employee.place_of_employment}`, detailX, detailY);
+            detailY += lineHeight;
+            pdf.text(`Status: ${employee.status}`, detailX, detailY);
+            detailY += lineHeight;
             
             // Address
-            pdf.text(`Address: ${employee.address}`, 20, 130);
-            
-            // Add QR code
-            const qrSize = 50;
-            const qrX = 160;
-            const qrY = 45;
-            const qrData = `JSPL Employee ID: ${employee.id}\nName: ${employee.name}\nDesignation: ${employee.designation}\nMine: ${employee.mine}`;
-            
-            // Draw QR code background
-            pdf.setFillColor(255, 255, 255);
-            pdf.rect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 20, 'F');
+            pdf.text(`Address: ${employee.permanent_address}`, startX, detailY + 5);
             
             // Generate QR code
-            const qrCanvas = document.createElement('canvas');
-            new QRCode(qrCanvas, {
-                text: qrData,
-                width: qrSize,
-                height: qrSize,
+            const qrSize = 40;
+            const qrX = 160;
+            const qrY = startY;
+            
+            // Create temporary div for QR code
+            const qrContainer = document.createElement('div');
+            document.body.appendChild(qrContainer);
+            new QRCode(qrContainer, {
+                text: `JSPL Employee ID: ${employee.id}\nName: ${employee.first_name} ${employee.last_name}\nMine: ${employee.place_of_employment}`,
+                width: qrSize * 4, // Higher resolution for better print quality
+                height: qrSize * 4,
                 colorDark: "#000000",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
             
-            // Convert canvas to image
-            const qrImage = qrCanvas.toDataURL('image/png');
-            pdf.addImage(qrImage, 'PNG', qrX, qrY, qrSize, qrSize);
+            // Get QR code as data URL
+            const canvas = qrContainer.querySelector('canvas');
+            const qrDataURL = canvas.toDataURL('image/png');
             
-            pdf.text('Scan to verify', qrX + qrSize/2, qrY + qrSize + 10, null, null, 'center');
+            // Add QR code to PDF
+            pdf.addImage(qrDataURL, 'PNG', qrX, qrY, qrSize, qrSize);
+            pdf.text("Scan to verify", qrX + qrSize/2, qrY + qrSize + 5, null, null, 'center');
             
-            // Add footer
+            // Clean up
+            document.body.removeChild(qrContainer);
+            
+            // Footer with signatures
             pdf.setLineWidth(0.5);
             pdf.line(30, 180, 80, 180);
             pdf.line(130, 180, 180, 180);
@@ -1793,12 +1809,15 @@
             pdf.text("Signature of Employee", 155, 185, null, null, 'center');
             
             // Add page number
-            pdf.setFontSize(10);
+            pdf.setFontSize(8);
             pdf.text("Page 1 of 1", 105, 290, null, null, 'center');
             
             // Show in preview
             const pdfData = pdf.output('datauristring');
             document.querySelector('.pdf-view').innerHTML = `<iframe src="${pdfData}" style="width:100%; height:100%; border:none"></iframe>`;
+            
+            // Download the PDF
+            pdf.save(`JSPL_Employee_${employee.id}.pdf`);
             
             showNotification('PDF generated successfully!');
         }
@@ -1814,44 +1833,8 @@
             }, 3000);
         }
         
-        // Navigation
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('#dashboardSection, #addEmployeeSection, #viewEmployeeSection, #generatePdfSection').forEach(el => {
-                el.classList.add('d-none');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionId).classList.remove('d-none');
-            
-            // Update breadcrumb
-            const breadcrumb = document.getElementById('breadcrumb');
-            let sectionName = '';
-            
-            switch(sectionId) {
-                case 'dashboardSection':
-                    sectionName = 'Dashboard';
-                    break;
-                case 'addEmployeeSection':
-                    sectionName = 'Add Employee Details';
-                    break;
-                case 'viewEmployeeSection':
-                    sectionName = 'View Employees';
-                    break;
-                case 'generatePdfSection':
-                    sectionName = 'Generate ID Card';
-                    break;
-            }
-            
-            breadcrumb.innerHTML = `
-                <li class="breadcrumb-item"><a href="#" data-section="dashboard">Mine Dashboard</a></li>
-                <li class="breadcrumb-item active">${sectionName}</li>
-            `;
-        }
-        
-        // Initialize
-        function init() {
-            // Initialize charts
+        // Initialize charts
+        function initCharts() {
             // Employee chart
             const employeeCtx = document.getElementById('employeeChart').getContext('2d');
             new Chart(employeeCtx, {
@@ -1914,6 +1897,47 @@
                     }
                 }
             });
+        }
+        
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('#dashboardSection, #addEmployeeSection, #viewEmployeeSection, #generatePdfSection').forEach(el => {
+                el.classList.add('d-none');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('d-none');
+            
+            // Update breadcrumb
+            const breadcrumb = document.getElementById('breadcrumb');
+            let sectionName = '';
+            
+            switch(sectionId) {
+                case 'dashboardSection':
+                    sectionName = 'Dashboard';
+                    break;
+                case 'addEmployeeSection':
+                    sectionName = 'Add Employee Details';
+                    break;
+                case 'viewEmployeeSection':
+                    sectionName = 'View Employees';
+                    break;
+                case 'generatePdfSection':
+                    sectionName = 'Generate ID Card';
+                    break;
+            }
+            
+            breadcrumb.innerHTML = `
+                <li class="breadcrumb-item"><a href="#" data-section="dashboard">Mine Dashboard</a></li>
+                <li class="breadcrumb-item active">${sectionName}</li>
+            `;
+        }
+        
+        // Initialize
+        function init() {
+            // Initialize charts
+            initCharts();
             
             // Generate QR codes for preview
             const qr1 = document.getElementById('qrPreview1');
@@ -2025,6 +2049,39 @@
         // Mobile sidebar toggle
         document.querySelector('.mobile-toggle').addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Handle form submission
+        document.getElementById('employeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const employeeData = {};
+            
+            for (const [key, value] of formData.entries()) {
+                employeeData[key] = value;
+            }
+            
+            // Generate employee ID
+            employeeData.id = `EMP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+            employeeData.status = 'Active';
+            
+            // Save employee
+            const employees = getAllEmployees();
+            employees.push(employeeData);
+            localStorage.setItem(EMPLOYEE_STORAGE_KEY, JSON.stringify(employees));
+            
+            showNotification('Employee details saved successfully!');
+            
+            // Reset form
+            this.reset();
+            
+            // Set today's date for some fields
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="date_of_joining"]').value = today;
+            document.querySelector('input[name="imz_pme_date"]').value = today;
+            document.querySelector('input[name="yt_certificate_date"]').value = today;
         });
         
         // Initialize form with today's date
